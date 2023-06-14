@@ -11,8 +11,14 @@ const createUser = (userData, callback) => {
   db.query(query, (error, result) => {
     if (error) {
       if (error.code === '23505' && error.constraint === 'email_unico') {
-        const duplicateEmailError = new Error('Email já cadastrado');
-        return callback(duplicateEmailError);
+        const duplicateEmailError = {
+          message: 'Email já cadastrado',
+          errorCode: error.code,
+          tabela: error.table,
+          constraint: error.constraint,
+          error: error.detail
+        };
+        return callback(duplicateEmailError, null);
       }
       console.error('createUser() error:', error);
       return callback(error);
